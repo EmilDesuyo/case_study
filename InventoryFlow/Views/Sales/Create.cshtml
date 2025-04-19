@@ -1,0 +1,26 @@
+﻿@model SaleCreateViewModel
+
+<form asp-action="Create" id="saleForm">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Available Products</h4>
+            <table class="table">
+                @foreach (var product in Model.AvailableProducts)
+                {
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="SelectedItems.Index" value="@product.ItemCode" />
+                            <input type="hidden" name="SelectedItems[@product.ItemCode].ProductId" value="@product.ItemCode" />
+                            @product.Name (@product.Price.ToString("C"))
+                        </td>
+                        <td>
+                            <input type="number" name="SelectedItems[@product.ItemCode].Quantity"
+                                   min="1" max="@product.AvailableQuantity" class="form-control" />
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Complete Sale</button>
+</form>

@@ -1,0 +1,60 @@
+﻿@model List<PurchaseOrder>
+
+@{
+    ViewData["Title"] = "Purchase Orders";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Purchase Orders</h6>
+        <a asp-action="Create" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-circle"></i> New Order
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.Id.Substring(0, 8)</td>
+                            <td>@order.OrderDate.ToString("d")</td>
+                            <td>@order.Supplier?.Name</td>
+                            <td>
+                                <span class="badge @(order.Status == "Received" ? "bg-success" : "bg-warning")">
+                                    @order.Status
+                                </span>
+                            </td>
+                            <td>@order.TotalAmount.ToString("C")</td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+                                @if (order.Status == "Pending" && User.IsInRole("Admin"))
+                                {
+                                    <form asp-action="ReceiveOrder" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check-circle"></i> Receive
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

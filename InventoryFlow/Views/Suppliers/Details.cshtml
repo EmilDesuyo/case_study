@@ -1,0 +1,89 @@
+﻿@model InventoryFlow.Models.Supplier
+
+@{
+    ViewData["Title"] = "Supplier Details";
+}
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Supplier Details</h6>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class="col-sm-10">
+                <a href="mailto:@Model.Email">@Model.Email</a>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Phone)
+            </dt>
+            <dd class="col-sm-10">
+                <a href="tel:@Model.Phone">@Model.Phone</a>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+        </dl>
+
+        <h5 class="mt-4">Products Supplied</h5>
+        @if (Model.Products?.Any() == true)
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Current Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ItemCode">
+                                        @product.ItemCode
+                                    </a>
+                                </td>
+                                <td>@product.Name</td>
+                                <td>@product.Category</td>
+                                <td class="@(product.Quantity < product.MinStockLevel ? "text-warning font-weight-bold" : "")">
+                                    @product.Quantity
+                                    @if (product.Quantity < product.MinStockLevel)
+                                    {
+                                        <span class="badge bg-warning text-dark ms-2">Low Stock</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">No products currently supplied by this vendor.</div>
+        }
+    </div>
+</div>

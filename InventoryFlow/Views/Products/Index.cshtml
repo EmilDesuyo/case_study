@@ -1,0 +1,58 @@
+﻿@model IEnumerable<InventoryFlow.Models.Product>
+
+<!-- Add this at the top if missing -->
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
+    <div class="col-md-6">
+        <form asp-action="Index" method="get">
+            <div class="input-group">
+                <input type="text" name="searchString" class="form-control" placeholder="Search...">
+                <select name="categoryFilter" class="form-control">
+                    <option value="">All Categories</option>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- This table must be present -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item Code</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ItemCode</td>
+                <td>@item.Name</td>
+                <td>@item.Category</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ItemCode">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ItemCode">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ItemCode">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>        

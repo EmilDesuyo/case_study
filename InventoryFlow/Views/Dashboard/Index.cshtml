@@ -1,0 +1,185 @@
+﻿@model InventoryFlow.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row mb-4">
+    <!-- Inventory Summary Cards -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Products
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-box-seam fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Low Stock Items
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.LowStockProducts</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-exclamation-triangle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Inventory Value
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.InventoryValue.ToString("C")</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-currency-dollar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Suppliers
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalSuppliers</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-people fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Products -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Recently Updated Products</h6>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-sm btn-primary">View All</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model.RecentProducts)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@product.ItemCode">
+                                    @product.Name
+                                </a>
+                            </td>
+                            <td>@product.Category</td>
+                            <td class="@(product.Quantity < product.MinStockLevel ? "text-warning fw-bold" : "")">
+                                @product.Quantity
+                                @if (product.Quantity < product.MinStockLevel)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">Low Stock</span>
+                                }
+                            </td>
+                            <td title="@product.LastUpdated.ToString("g")">
+                                @(DateTime.Now.Subtract(product.LastUpdated).TotalHours < 24 ?
+                                    "Today" :
+                                    product.LastUpdated.ToString("MMM d"))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Critical Stock Levels -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3 bg-danger text-white">
+        <h6 class="m-0 font-weight-bold">Critical Stock Levels</h6>
+    </div>
+    <div class="card-body">
+        @if (!Model.CriticalStockProducts.Any())
+        {
+            <div class="alert alert-success mb-0">
+                <i class="bi bi-check-circle-fill"></i> No products at critical levels
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Current</th>
+                            <th>Minimum</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.CriticalStockProducts)
+                        {
+                            <tr>
+                                <td>@product.Name</td>
+                                <td class="text-danger fw-bold">@product.Quantity</td>
+                                <td>@product.MinStockLevel</td>
+                                <td>
+                                    <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.ItemCode"
+                                       class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i> Restock
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        .border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+        .border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+        .border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+        .border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+    </style>
+}
