@@ -9,9 +9,11 @@
         <h6 class="m-0 font-weight-bold text-primary">Create New Product</h6>
     </div>
     <div class="card-body">
-        <form asp-action="Create" id="createProductForm">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
+
             <div class="form-group row mb-3">
                 <label asp-for="ItemCode" class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
@@ -19,9 +21,7 @@
                     <span asp-validation-for="ItemCode" class="text-danger"></span>
                 </div>
             </div>
-            
-            <!-- Other fields (Name, Description, etc.) -->
-            
+
             <div class="form-group row mb-3">
                 <label asp-for="SupplierId" class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
@@ -29,7 +29,6 @@
                             asp-items="@(new SelectList(Model.AvailableSuppliers, "Id", "Name"))">
                         <option value="">-- Select Supplier --</option>
                     </select>
-
                     <span asp-validation-for="SupplierId" class="text-danger"></span>
                 </div>
             </div>
@@ -82,7 +81,6 @@
                 </div>
             </div>
 
-
             <div class="form-group">
                 <button type="submit" class="btn btn-primary" id="submitButton">
                     <i class="bi bi-save"></i> Create
@@ -96,116 +94,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get form elements with null checks
-            const form = document.getElementById('createProductForm');
-            const submitButton = document.getElementById('submitButton');
-
-            // Debug: Log if elements are not found
-            if (!form) {
-                console.error('Error: Form element with ID "createProductForm" not found');
-                return;
-            }
-
-            if (!submitButton) {
-                console.warn('Warning: Submit button with ID "submitButton" not found');
-                // Continue without button-specific logging
-            }
-
-            // Form submission handler
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    console.group('Form Submission Debugging');
-                    console.log('Form submission initiated');
-
-                    // Check form validity
-                    const isValid = form.checkValidity();
-                    console.log(`Form validity: ${isValid ? 'VALID' : 'INVALID'}`);
-
-                    if (!isValid) {
-                        // Prevent form submission if invalid
-                        e.preventDefault();
-
-                        // Collect all validation errors
-                        const invalidFields = Array.from(form.querySelectorAll(':invalid'));
-                        const errors = invalidFields.map(field => ({
-                            id: field.id,
-                            name: field.name,
-                            type: field.type,
-                            value: field.value,
-                            validationMessage: field.validationMessage,
-                            validity: field.validity
-                        }));
-
-                        console.group('Validation Errors');
-                        console.table(errors);
-                        console.groupEnd();
-
-                        // Highlight problematic fields in console
-                        invalidFields.forEach(field => {
-                            console.log(`Invalid field: ${field.name || field.id}`, field);
-                        });
-                    } else {
-                        console.log('Form is valid - proceeding with submission');
-                        // You can add additional pre-submission checks here
-                    }
-
-                    // Log all form data
-                    console.group('Form Data');
-                    const formData = new FormData(form);
-                    for (const [key, value] of formData.entries()) {
-                        console.log(`${key}:`, value);
-                    }
-                    console.groupEnd();
-
-                    console.groupEnd(); // Close main group
-                });
-            }
-
-            // Button click handler (if button exists)
-            if (submitButton) {
-                submitButton.addEventListener('click', function() {
-                    console.log('Submit button clicked - form validation state:', form.checkValidity());
-                });
-            }
-
-            // Field change tracking for all form inputs
-            if (form) {
-                form.querySelectorAll('input, select, textarea').forEach(element => {
-                    element.addEventListener('change', function() {
-                        console.log(`Field changed - ${this.name || this.id}:`, {
-                            oldValue: this.defaultValue,
-                            newValue: this.value,
-                            validity: this.validity
-                        });
-                    });
-
-                    // Optional: Add input tracking for real-time debugging
-                    element.addEventListener('input', function() {
-                        console.debug(`Input detected - ${this.name || this.id}:`, this.value);
-                    });
-                });
-            }
-
-            // Debug: Log initial form state
-            console.log('Form debugging initialized', {
-                form: form,
-                submitButton: submitButton,
-                formElements: form ? Array.from(form.elements).map(el => ({
-                    id: el.id,
-                    name: el.name,
-                    type: el.type,
-                    value: el.value
-                })) : null
-            });
-        });
-
-        // Fallback error handler
-        window.addEventListener('error', function(e) {
-            console.error('Unhandled error:', e.message, e.error);
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

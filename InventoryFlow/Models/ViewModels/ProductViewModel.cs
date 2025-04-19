@@ -37,7 +37,6 @@ namespace InventoryFlow.Models.ViewModels
         [Display(Name = "Supplier")]
         public string? SupplierId { get; set; }
 
-        public List<Supplier>? AvailableSuppliers { get; set; }
-        public List<Supplier> Suppliers { get; internal set; }
+        public List<Supplier> AvailableSuppliers { get; set; } = new List<Supplier>();
     }
 }

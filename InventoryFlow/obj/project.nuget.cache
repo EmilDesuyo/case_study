@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "lqscb3IVOPU=",
+  "dgSpecHash": "A49vjkLKzq8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\InventoryFlow.csproj",
+  "projectFilePath": "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\InventoryFlow.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\EJ\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\EJ\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

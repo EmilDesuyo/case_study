@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\InventoryFlow.csproj": {}
+    "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\InventoryFlow.csproj": {}
   },
   "projects": {
-    "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\InventoryFlow.csproj": {
+    "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\InventoryFlow.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\InventoryFlow.csproj",
+        "projectUniqueName": "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\InventoryFlow.csproj",
         "projectName": "InventoryFlow",
-        "projectPath": "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\InventoryFlow.csproj",
+        "projectPath": "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\InventoryFlow.csproj",
         "packagesPath": "C:\\Users\\EJ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EJ\\source\\repos\\InventoryFlow\\InventoryFlow\\obj\\",
+        "outputPath": "C:\\Users\\EJ\\Documents\\GitHub\\case_study\\InventoryFlow\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

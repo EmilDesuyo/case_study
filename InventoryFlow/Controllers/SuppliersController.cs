@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using InventoryFlow.Models;
 using System.Threading.Tasks;
+using System;
+using InventoryFlow.Models.ViewModels;
 using System.Linq;
 
 namespace InventoryFlow.Controllers
@@ -42,21 +44,37 @@ namespace InventoryFlow.Controllers
         // GET: Suppliers/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new SupplierViewModel());
         }
 
         // POST: Suppliers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,Phone,Address")] Supplier supplier)
+        public async Task<IActionResult> Create(SupplierViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(supplier);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var supplier = new Supplier
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = model.Name,
+                        Email = model.Email,
+                        Phone = model.Phone,
+                        Address = model.Address
+                    };
+
+                    _context.Add(supplier);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving the supplier: " + ex.Message);
+                }
             }
-            return View(supplier);
+            return View(model);
         }
 
         // GET: Suppliers/Edit/5
@@ -132,8 +150,11 @@ namespace InventoryFlow.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
-            _context.Suppliers.Remove(supplier);
-            await _context.SaveChangesAsync();
+            if (supplier != null)
+            {
+                _context.Suppliers.Remove(supplier);
+                await _context.SaveChangesAsync();
+            }
             return RedirectToAction(nameof(Index));
         }
 

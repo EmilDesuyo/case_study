@@ -1,4 +1,4 @@
-﻿@model InventoryFlow.Models.Supplier
+﻿@model InventoryFlow.Models.ViewModels.SupplierViewModel
 
 @{
     ViewData["Title"] = "Create New Supplier";
@@ -9,7 +9,7 @@
         <h6 class="m-0 font-weight-bold text-primary">Create New Supplier</h6>
     </div>
     <div class="card-body">
-        <form id="createSupplierForm" method="post">
+        <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -58,34 +58,31 @@
     </div>
 </div>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
-        document.getElementById("createSupplierForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+        $(document).ready(function() {
+            // Debugging: Log form submission
+            $('form').submit(function(e) {
+                console.log('Form submitted');
+                console.log('Form data:', $(this).serialize());
+            });
 
-            const form = e.target;
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-
-            try {
-                const response = await fetch("/Suppliers/Create", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "RequestVerificationToken": document.querySelector("input[name='__RequestVerificationToken']").value
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else {
-                    const html = await response.text();
-                    document.body.innerHTML = html;
+            // Debugging: Log validation errors
+            $.validator.setDefaults({
+                debug: true,
+                errorClass: 'text-danger',
+                errorElement: 'span',
+                highlight: function(element, errorClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass) {
+                    $(element).removeClass('is-invalid');
                 }
-            } catch (err) {
-                console.error("Error submitting form:", err);
-            }
+            });
         });
     </script>
-
+}

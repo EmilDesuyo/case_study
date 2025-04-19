@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System;
 using InventoryFlow.Models.ViewModels;
 
-
 namespace InventoryFlow.Controllers
 {
     [Authorize(Roles = "Admin,Manager,Staff")]
@@ -59,8 +58,53 @@ namespace InventoryFlow.Controllers
             return View(products);
         }
 
-    // [Rest of your existing actions...]
+        // GET: Products/Create
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new ProductViewModel
+            {
+                AvailableSuppliers = await _context.Suppliers.ToListAsync()
+            };
+            return View(model);
+        }
 
+        // POST: Products/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ProductViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var product = new Product
+                    {
+                        ItemCode = model.ItemCode,
+                        Name = model.Name,
+                        Description = model.Description,
+                        Category = model.Category,
+                        Price = model.Price,
+                        Quantity = model.Quantity,
+                        MinStockLevel = model.MinStockLevel,
+                        SupplierId = model.SupplierId,
+                        LastUpdated = DateTime.Now
+                    };
+
+                    _context.Products.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving the product: " + ex.Message);
+                }
+            }
+
+            // If we got here, something failed; redisplay form
+            model.AvailableSuppliers = await _context.Suppliers.ToListAsync();
+            return View(model);
+        }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(string id)
@@ -82,38 +126,6 @@ namespace InventoryFlow.Controllers
             return View(product);
         }
 
-        public async Task<IActionResult> Create(ProductViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Console.WriteLine($"Item Code: {model.ItemCode}");
-                Console.WriteLine($"Name: {model.Name}");
-                Console.WriteLine($"Description: {model.Description}");
-                // Log other properties
-
-                var product = new Product
-                {
-                    ItemCode = model.ItemCode,
-                    Name = model.Name,
-                    Description = model.Description,
-                    Category = model.Category,
-                    Price = model.Price,
-                    Quantity = model.Quantity,
-                    MinStockLevel = model.MinStockLevel,
-                    SupplierId = model.SupplierId,
-                    LastUpdated = DateTime.Now
-                };
-
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            model.AvailableSuppliers = await _context.Suppliers.ToListAsync();
-            return View(model);
-        }
-
-
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -127,6 +139,7 @@ namespace InventoryFlow.Controllers
             {
                 return NotFound();
             }
+
             ViewBag.Suppliers = await _context.Suppliers.ToListAsync();
             return View(product);
         }
@@ -146,8 +159,8 @@ namespace InventoryFlow.Controllers
                 try
                 {
                     product.LastUpdated = DateTime.Now;
-                    _context.Products.Update(product);  // Changed from _context.Update
-                    await _context.SaveChangesAsync();  // Make sure to await
+                    _context.Update(product);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -195,7 +208,7 @@ namespace InventoryFlow.Controllers
             if (product != null)
             {
                 _context.Products.Remove(product);
-                await _context.SaveChangesAsync();  // Make sure to await
+                await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));
         }
